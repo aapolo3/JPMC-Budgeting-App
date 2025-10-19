@@ -1,0 +1,238 @@
+/* ---------- Base / Reset ---------- */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+:root{
+  --bg: #e9eaeb;              /* light gray app bg */
+  --panel: #f6f7f8;           /* card/panel bg */
+  --text: #1e1f22;            /* primary text */
+  --muted: #6b6f76;           /* muted text */
+  --chip: #b5b8bd;            /* gray “chip” look (like screenshot) */
+  --chip-text: #111; 
+  --chip-focus: #8e93a0;
+  --line: #d7d9dd;
+  --accent: #111;             /* minimal dark accent */
+  --radius: 14px;
+  --shadow: 0 6px 20px rgba(0,0,0,.06);
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
+               Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji",
+               "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+body { margin: 0; }
+
+h1, h2 {
+  margin: 0 0 .6rem 0;
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+h1 { font-size: clamp(22px, 2.2vw, 28px); }
+h2 { font-size: clamp(16px, 1.6vw, 18px); }
+
+p { margin: 0; }
+
+.sr-only{
+  position:absolute!important; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+}
+
+/* ---------- App Layout ---------- */
+#app{
+  max-width: 980px;
+  margin: 48px auto;
+  padding: 0 24px;
+}
+
+.panel{
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px 16px 16px;
+  box-shadow: var(--shadow);
+  margin: 16px 0;
+}
+
+.row{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+/* ---------- Labels & Type ---------- */
+.label { color: var(--text); font-weight: 600; }
+.muted { color: var(--muted); font-size: 14px; }
+.big   { font-weight: 800; font-size: clamp(20px, 3vw, 28px); }
+.advice{ margin-top: 12px; color: var(--text); }
+
+/* ---------- Inputs ---------- */
+input[type="number"],
+input[type="text"],
+select{
+  appearance: none;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--text);
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 15px;
+  min-width: 180px;
+  outline: none;
+  transition: border-color .18s ease, box-shadow .18s ease;
+}
+
+input:focus,
+select:focus{
+  border-color: var(--chip-focus);
+  box-shadow: 0 0 0 4px rgba(142,147,160,.18);
+}
+
+/* ---------- Segmented Control (Weekly | Biweekly | Monthly) ---------- */
+.segmented{
+  display: inline-flex;
+  gap: 10px;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.seg-btn{
+  display: inline-flex;
+  align-items: center;
+  background: var(--chip);
+  color: var(--chip-text);
+  padding: 7px 12px;
+  border-radius: 10px;
+  user-select: none;
+  cursor: pointer;
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+
+.seg-btn input{
+  /* hide native */
+  position: absolute; opacity: 0; pointer-events: none;
+}
+
+.seg-btn:has(input:focus-visible){
+  outline: 3px solid rgba(142,147,160,.45);
+  outline-offset: 2px;
+}
+
+.seg-btn:has(input:checked){
+  background: #9da1a8;
+}
+
+/* ---------- Forms: Bills & Goals ---------- */
+.grid{
+  display: grid;
+  grid-template-columns: max-content 180px 1fr max-content;
+  gap: 10px 12px;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.inline{
+  font-weight: 700;
+  color: var(--text);
+  background: var(--chip);
+  padding: 6px 10px;
+  border-radius: 10px;
+}
+
+/* “+” Add buttons */
+.add-btn{
+  display: inline-grid;
+  place-items: center;
+  width: 180px;
+  height: 40px;
+  border-radius: 10px;
+  border: none;
+  font-size: 22px;
+  font-weight: 800;
+  background: #9aa0a6; /* slightly darker than chip to pop */
+  color: #fff;
+  cursor: pointer;
+  transition: transform .06s ease, filter .15s ease;
+}
+.add-btn:hover{ filter: brightness(1.05); }
+.add-btn:active{ transform: translateY(1px); }
+
+/* ---------- Lists ---------- */
+.list{
+  list-style: none;
+  margin: 14px 0 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.list li{
+  display: grid;
+  grid-template-columns: 1fr max-content max-content;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.badge{
+  background: var(--chip);
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.icon-btn{
+  border: none;
+  background: transparent;
+  padding: 6px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.icon-btn:hover{ background: #f0f1f2; }
+
+/* ---------- Summary ---------- */
+.summary-grid{
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.summary-grid > div{
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px;
+  min-height: 76px;
+  display: grid;
+  align-content: center;
+  gap: 6px;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 760px){
+  #app{ margin: 28px auto; }
+
+  .grid{
+    grid-template-columns: 1fr 1fr;
+  }
+  .add-btn{ width: 100%; }
+  .list li{
+    grid-template-columns: 1fr max-content;
+  }
+  .summary-grid{
+    grid-template-columns: 1fr;
+  }
+}

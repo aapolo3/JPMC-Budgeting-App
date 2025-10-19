@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPMC Budgeting Site</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+    <main id="app">
+
+        <h1>Budget Planner</h1>
+
+        <!-- Income + Pay Frequency -->
+        <section class="panel" aria-labelledby="income-heading">
+            <h2 id="income-heading">Income</h2>
+
+            <div class="row">
+                <label for="income">Income: $</label>
+                <input id="income" name="income" type="number" step="0.01" min="0" placeholder="0.00"
+                    inputmode="decimal" />
+            </div>
+
+            <div class="row">
+                <span class="label">Paycheck Frequency:</span>
+                <fieldset class="segmented" role="radiogroup" aria-label="Paycheck Frequency">
+                    <label class="seg-btn">
+                        <input type="radio" name="frequency" value="weekly" checked />
+                        <span>Weekly</span>
+                    </label>
+                    <label class="seg-btn">
+                        <input type="radio" name="frequency" value="biweekly" />
+                        <span>Biweekly</span>
+                    </label>
+                    <label class="seg-btn">
+                        <input type="radio" name="frequency" value="monthly" />
+                        <span>Monthly</span>
+                    </label>
+                </fieldset>
+            </div>
+        </section>
+
+        <!-- Bills -->
+        <section class="panel" aria-labelledby="bills-heading">
+            <h2 id="bills-heading">List Bills</h2>
+
+            <form id="bill-form" class="grid" autocomplete="off">
+                <label for="bill-type" class="inline">Select Type:</label>
+                <select id="bill-type" required>
+                    <option value="" disabled selected>— choose —</option>
+                    <option value="rent">Rent</option>
+                    <option value="utilities">Utilities</option>
+                    <option value="internet">Internet</option>
+                    <option value="phone">Phone</option>
+                    <option value="insurance">Insurance</option>
+                    <option value="subscriptions">Subscriptions</option>
+                    <option value="groceries">Groceries</option>
+                    <option value="transportation">Transportation</option>
+                    <option value="other">Other</option>
+                </select>
+
+                <label for="bill-name" class="sr-only">Bill Name</label>
+                <input id="bill-name" type="text" placeholder="Label (e.g., Electric)" required />
+
+                <label for="bill-amount" class="sr-only">Bill Amount</label>
+                <input id="bill-amount" type="number" step="0.01" min="0" placeholder="Amount" required
+                    inputmode="decimal" />
+
+                <button id="add-bill" type="submit" class="add-btn" aria-label="Add bill" onclick="addBillOnClick()">+</button>
+            </form>
+
+            <ul id="bill-list" class="list" aria-live="polite" aria-label="Bills list"></ul>
+        </section>
+
+        <!-- Goals -->
+        <section class="panel" aria-labelledby="goals-heading">
+            <h2 id="goals-heading">Any goals?</h2>
+
+            <form id="goal-form" class="grid" autocomplete="off">
+                <label for="goal-type" class="inline">Select Type:</label>
+                <select id="goal-type" required>
+                    <option value="" disabled selected>— choose —</option>
+                    <option value="save_per_month">Save per Month</option>
+                    <option value="save_per_paycheck">Save per Paycheck</option>
+                    <option value="pay_debt">Pay Down Debt</option>
+                    <option value="emergency_fund">Emergency Fund</option>
+                    <option value="other">Other</option>
+                </select>
+
+                <label for="goal-name" class="sr-only">Goal Label</label>
+                <input id="goal-name" type="text" placeholder="Label (e.g., New laptop)" required />
+
+                <label for="goal-amount" class="sr-only">Goal Amount</label>
+                <input id="goal-amount" type="number" step="0.01" min="0" placeholder="Amount" required
+                    inputmode="decimal" />
+
+                <button id="add-goal" type="submit" class="add-btn" aria-label="Add goal" onclick="addGoalOnClick()">+</button>
+            </form>
+
+            <ul id="goal-list" class="list" aria-live="polite" aria-label="Goals list"></ul>
+        </section>
+
+        <!-- Summary / Guidance -->
+        <section class="panel" aria-labelledby="summary-heading">
+            <h2 id="summary-heading">Summary</h2>
+            <div class="summary-grid">
+                <div>
+                    <p class="muted">Net after bills</p>
+                    <p id="net-after-bills" class="big">$0.00</p>
+                </div>
+                <div>
+                    <p class="muted">Planned savings</p>
+                    <p id="planned-savings" class="big">$0.00</p>
+                </div>
+                <div>
+                    <p class="muted">Leeway</p>
+                    <p id="leeway" class="big">$0.00</p>
+                </div>
+            </div>
+            <p id="advice" class="advice" aria-live="polite">
+                Enter your info to see if you have room to save or need to trim entertainment.
+            </p>
+        </section>
+    </main>
+
+    <script defer src="firebase.js"></script>
+    <script defer src="script.js"></script>
+
+</body>
+
+</html>
