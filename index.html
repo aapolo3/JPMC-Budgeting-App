@@ -2,15 +2,14 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>JPMC Budgeting Site</title>
     <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
     <main id="app">
-
         <h1>Budget Planner</h1>
 
         <!-- Income + Pay Frequency -->
@@ -46,60 +45,67 @@
         <section class="panel" aria-labelledby="bills-heading">
             <h2 id="bills-heading">List Bills</h2>
 
-            <form id="bill-form" class="grid" autocomplete="off">
-                <label for="bill-type" class="inline">Select Type:</label>
-                <select id="bill-type" required>
-                    <option value="" disabled selected>— choose —</option>
-                    <option value="rent">Rent</option>
-                    <option value="utilities">Utilities</option>
-                    <option value="internet">Internet</option>
-                    <option value="phone">Phone</option>
-                    <option value="insurance">Insurance</option>
-                    <option value="subscriptions">Subscriptions</option>
-                    <option value="groceries">Groceries</option>
-                    <option value="transportation">Transportation</option>
-                    <option value="other">Other</option>
-                </select>
+            <!-- container form (no submit); each row is a .grid.entry-row -->
+            <form id="bill-form" autocomplete="off">
+                <div class="grid entry-row">
+                    <label class="inline">Select Type:</label>
+                    <select required>
+                        <option value="" disabled selected>— choose —</option>
+                        <option value="rent">Rent</option>
+                        <option value="utilities">Utilities</option>
+                        <option value="internet">Internet</option>
+                        <option value="phone">Phone</option>
+                        <option value="insurance">Insurance</option>
+                        <option value="subscriptions">Subscriptions</option>
+                        <option value="groceries">Groceries</option>
+                        <option value="transportation">Transportation</option>
+                        <option value="other">Other</option>
+                    </select>
 
-                <label for="bill-name" class="sr-only">Bill Name</label>
-                <input id="bill-name" type="text" placeholder="Label (e.g., Electric)" required />
+                    <label class="sr-only">Bill Label</label>
+                    <input type="text" placeholder="Label (e.g., Electric)" required />
 
-                <label for="bill-amount" class="sr-only">Bill Amount</label>
-                <input id="bill-amount" type="number" step="0.01" min="0" placeholder="Amount" required
-                    inputmode="decimal" />
+                    <label class="sr-only">Bill Amount</label>
+                    <input type="number" step="0.01" min="0" placeholder="Amount" required inputmode="decimal" />
 
-                <button id="add-bill" type="submit" class="add-btn" aria-label="Add bill" onclick="addBillOnClick()">+</button>
+                    <div class="row" style="gap:8px;">
+                        <button type="button" class="add-btn add-line" aria-label="Add bill">+</button>
+                        <button type="button" class="icon-btn remove-line" aria-label="Remove bill"
+                            style="display:none;">✕</button>
+                    </div>
+                </div>
             </form>
-
-            <ul id="bill-list" class="list" aria-live="polite" aria-label="Bills list"></ul>
         </section>
 
         <!-- Goals -->
         <section class="panel" aria-labelledby="goals-heading">
             <h2 id="goals-heading">Any goals?</h2>
 
-            <form id="goal-form" class="grid" autocomplete="off">
-                <label for="goal-type" class="inline">Select Type:</label>
-                <select id="goal-type" required>
-                    <option value="" disabled selected>— choose —</option>
-                    <option value="save_per_month">Save per Month</option>
-                    <option value="save_per_paycheck">Save per Paycheck</option>
-                    <option value="pay_debt">Pay Down Debt</option>
-                    <option value="emergency_fund">Emergency Fund</option>
-                    <option value="other">Other</option>
-                </select>
+            <form id="goal-form" autocomplete="off">
+                <div class="grid entry-row">
+                    <label class="inline">Select Type:</label>
+                    <select required>
+                        <option value="" disabled selected>— choose —</option>
+                        <option value="save_per_month">Save per Month</option>
+                        <option value="save_per_paycheck">Save per Paycheck</option>
+                        <option value="pay_debt">Pay Down Debt</option>
+                        <option value="emergency_fund">Emergency Fund</option>
+                        <option value="other">Other</option>
+                    </select>
 
-                <label for="goal-name" class="sr-only">Goal Label</label>
-                <input id="goal-name" type="text" placeholder="Label (e.g., New laptop)" required />
+                    <label class="sr-only">Goal Label</label>
+                    <input type="text" placeholder="Label (e.g., New laptop)" required />
 
-                <label for="goal-amount" class="sr-only">Goal Amount</label>
-                <input id="goal-amount" type="number" step="0.01" min="0" placeholder="Amount" required
-                    inputmode="decimal" />
+                    <label class="sr-only">Goal Amount</label>
+                    <input type="number" step="0.01" min="0" placeholder="Amount" required inputmode="decimal" />
 
-                <button id="add-goal" type="submit" class="add-btn" aria-label="Add goal" onclick="addGoalOnClick()">+</button>
+                    <div class="row" style="gap:8px;">
+                        <button type="button" class="add-btn add-line" aria-label="Add goal">+</button>
+                        <button type="button" class="icon-btn remove-line" aria-label="Remove goal"
+                            style="display:none;">✕</button>
+                    </div>
+                </div>
             </form>
-
-            <ul id="goal-list" class="list" aria-live="polite" aria-label="Goals list"></ul>
         </section>
 
         <!-- Summary / Guidance -->
@@ -127,7 +133,6 @@
 
     <script defer src="firebase.js"></script>
     <script defer src="script.js"></script>
-
 </body>
 
 </html>

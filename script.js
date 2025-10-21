@@ -1,39 +1,41 @@
-function addBillOnClick() {
-  const typeEl = document.getElementById("bill-type");
-  const nameEl = document.getElementById("bill-name");
-  const amountEl = document.getElementById("bill-amount");
-  const listEl = document.getElementById("bill-list");
+// Prevent any form submit (we're only duplicating rows)
+document.addEventListener("submit", (e) => e.preventDefault());
 
-  const type = typeEl.value;
-  const name = nameEl.value.trim();
-  const amount = parseFloat(amountEl.value || "0");
+// Delegate clicks for both Bills and Goals containers
+["bill-form", "goal-form"].forEach((formId) => {
+  const form = document.getElementById(formId);
 
-  if (!type || !name || !(amount > 0)) return; // simple guard
+  form.addEventListener("click", (e) => {
+    const addBtn = e.target.closest(".add-line");
+    const removeBtn = e.target.closest(".remove-line");
 
-  const li = document.createElement("li");
-  li.textContent = `${name} — $${amount.toFixed(2)} (${type})`;
-  listEl.appendChild(li);
+    // Add = clone the entire entry-row
+    if (addBtn) {
+      const row = addBtn.closest(".entry-row");
+      const clone = row.cloneNode(true);
 
-  nameEl.value = "";
-  amountEl.value = "";
-}
+      // clear inputs in clone
+      clone.querySelectorAll("input").forEach((i) => (i.value = ""));
+      const sel = clone.querySelector("select");
+      if (sel) sel.selectedIndex = 0;
 
-function addGoalOnClick() {
-  const typeEl = document.getElementById("goal-type");
-  const nameEl = document.getElementById("goal-name");
-  const amountEl = document.getElementById("goal-amount");
-  const listEl = document.getElementById("goal-list");
+      // show remove on clone
+      const rem = clone.querySelector(".remove-line");
+      if (rem) rem.style.display = "";
 
-  const type = typeEl.value;
-  const name = nameEl.value.trim();
-  const amount = parseFloat(amountEl.value || "0");
+      // insert after the current row
+      row.after(clone);
 
-  if (!type || !name || !(amount > 0)) return; // simple guard
+      // focus first control in the new row
+      (clone.querySelector("select, input") || clone).focus();
+    }
 
-  const li = document.createElement("li");
-  li.textContent = `${name} — $${amount.toFixed(2)} (${type})`;
-  listEl.appendChild(li);
-
-  nameEl.value = "";
-  amountEl.value = "";
-}
+    // Remove a row (keep at least one)
+    if (removeBtn) {
+      const rows = form.querySelectorAll(".entry-row");
+      if (rows.length > 1) {
+        removeBtn.closest(".entry-row").remove();
+      }
+    }
+  });
+});
