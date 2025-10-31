@@ -1,11 +1,10 @@
-// Import the functions you need from the SDKs you need
+// ---- Firebase (ES module, no-auth dev setup) ----
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-analytics.js";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import {
+    getDatabase, ref, set, push, update, onValue, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-database.js";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// ✅ DEFINE CONFIG BEFORE initializeApp
 const firebaseConfig = {
     apiKey: "AIzaSyBXOBd8Ma1s4c7ExCs5S5s2DmIXMDKkFmk",
     authDomain: "jmpc-budget-app.firebaseapp.com",
@@ -17,171 +16,103 @@ const firebaseConfig = {
     measurementId: "G-VW59F692RW"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-
-// --- Init ---
 const db = getDatabase(app);
 
-// --- DOM refs (match the HTML I gave you earlier) ---
+// ---- DOM refs ----
 const incomeEl = document.getElementById("income");
-const segRadios = [...document.querySelectorAll('input[name="frequency"]')];
-
-const billForm = document.getElementById("bill-form");
-const billType = document.getElementById("bill-type");
-const billName = document.getElementById("bill-name");
-const billAmount = document.getElementById("bill-amount");
-const billList = document.getElementById("bill-list");
-
-const goalForm = document.getElementById("goal-form");
-const goalType = document.getElementById("goal-type");
-const goalName = document.getElementById("goal-name");
-const goalAmount = document.getElementById("goal-amount");
-const goalList = document.getElementById("goal-list");
-
+const calcBtn = document.getElementById("calculate");
 const netAfterBillsEl = document.getElementById("net-after-bills");
 const plannedSavingsEl = document.getElementById("planned-savings");
 const leewayEl = document.getElementById("leeway");
 const adviceEl = document.getElementById("advice");
+const billForm = document.getElementById("bill-form");
+const goalForm = document.getElementById("goal-form");
 
-// --- State ---
-let uid = null;
-let state = {
-    income: 0,
-    frequency: "weekly",
-    bills: {},   // id -> {type, name, amount}
-    goals: {}    // id -> {type, name, amount}
-};
+// ---- Helpers ----
+const asNumber = (x) => Number.parseFloat(x) || 0;
+const currency = (n) => n.toLocaleString(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 2 });
+const getSelectedFrequency = () => (document.querySelector('input[name="frequency"]:checked')?.value || "weekly");
+const incomePerMonth = (income, freq) => (freq === "weekly" ? income * 52 / 12 : freq === "biweekly" ? income * 26 / 12 : income);
 
-// --- Auth then subscribe to DB ---
-signInAnonymously(auth).catch(console.error);
-
-onAuthStateChanged(auth, (user) => {
-    if (!user) return;
-    uid = user.uid;
-
-    // Subscribe to all data for this user
-    onValue(ref(db, `users/${uid}`), (snap) => {
-        const val = snap.val() || {};
-        state.income = Number(val.income ?? 0);
-        state.frequency = val.frequency ?? "weekly";
-        state.bills = val.bills ?? {};
-        state.goals = val.goals ?? {};
-
-        renderFromState();
-    });
-});
-
-// --- Helpers ---
-function asNumber(x) { return Number.parseFloat(x) || 0; }
-
-function incomePerMonth(income, freq) {
-    if (freq === "weekly") return income * 52 / 12;
-    if (freq === "biweekly") return income * 26 / 12;
-    return income; // monthly
+function collectRows(formEl) {
+    const items = [];
+    for (const row of formEl.querySelectorAll(".entry-row")) {
+        const [sel, nameInput, amtInput] = row.querySelectorAll("select, input");
+        const type = sel?.value || "";
+        const name = (nameInput?.value || "").trim();
+        const amount = asNumber(amtInput?.value || 0);
+        if (!type && !name && !amount) continue;
+        if (!type || !name) continue;
+        items.push({ type, name, amount });
+    }
+    return items;
 }
 
-function totals() {
-    const billsTotal = Object.values(state.bills).reduce((s, b) => s + asNumber(b.amount), 0);
-    const goalsTotal = Object.values(state.goals).reduce((s, g) => s + asNumber(g.amount), 0);
-    const monthlyIncome = incomePerMonth(state.income, state.frequency);
+function computeAndRender({ income, frequency, bills, goals }) {
+    const monthlyIncome = incomePerMonth(income, frequency);
+    const billsTotal = bills.reduce((s, b) => s + asNumber(b.amount), 0);
+    const goalsTotal = goals.reduce((s, g) => s + asNumber(g.amount), 0);
     const netAfterBills = monthlyIncome - billsTotal;
     const leeway = netAfterBills - goalsTotal;
-    return { billsTotal, goalsTotal, monthlyIncome, netAfterBills, leeway };
+
+    netAfterBillsEl.textContent = currency(netAfterBills);
+    plannedSavingsEl.textContent = currency(goalsTotal);
+    leewayEl.textContent = currency(leeway);
+    adviceEl.textContent = (leeway >= 0) ? "Nice! You have room to save." : "You’re over target—trim entertainment or reduce goals.";
+
+    return { monthlyIncome, billsTotal, goalsTotal, netAfterBills, leeway };
 }
 
-function currency(n) {
-    return n.toLocaleString(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 2 });
+// ---- Pseudo user id (since we're not using Auth) ----
+function getClientId() {
+    let id = localStorage.getItem("clientId");
+    if (!id) {
+        id = (crypto?.randomUUID?.() || Math.random().toString(36).slice(2));
+        localStorage.setItem("clientId", id);
+    }
+    return id;
 }
+const uid = getClientId();
 
-function setChipSelection(freq) {
-    segRadios.forEach(r => r.checked = (r.value === freq));
-}
+// ---- Load last saved ----
+onValue(ref(db, `users/${uid}`), (snap) => {
+    const val = snap.val() || {};
+    const income = asNumber(val.income ?? 0);
+    const frequency = val.frequency ?? "weekly";
+    const bills = Object.values(val.bills ?? {});
+    const goals = Object.values(val.goals ?? {});
 
-// --- Render ---
-function renderFromState() {
-    incomeEl.value = state.income ? state.income : "";
-    setChipSelection(state.frequency);
+    incomeEl.value = income || "";
+    const freqEl = document.querySelector(`input[name="frequency"][value="${frequency}"]`);
+    if (freqEl) freqEl.checked = true;
 
-    // Bills
-    billList.innerHTML = "";
-    Object.entries(state.bills).forEach(([id, b]) => {
-        const li = document.createElement("li");
-        li.innerHTML = `
-      <span><strong>${b.name}</strong> — ${currency(asNumber(b.amount))}</span>
-      <span class="badge">${b.type}</span>
-      <button class="icon-btn" aria-label="Delete bill">✕</button>
-    `;
-        li.querySelector("button").addEventListener("click", () => {
-            remove(ref(db, `users/${uid}/bills/${id}`));
-        });
-        billList.appendChild(li);
-    });
-
-    // Goals
-    goalList.innerHTML = "";
-    Object.entries(state.goals).forEach(([id, g]) => {
-        const li = document.createElement("li");
-        li.innerHTML = `
-      <span><strong>${g.name}</strong> — ${currency(asNumber(g.amount))}</span>
-      <span class="badge">${g.type}</span>
-      <button class="icon-btn" aria-label="Delete goal">✕</button>
-    `;
-        li.querySelector("button").addEventListener("click", () => {
-            remove(ref(db, `users/${uid}/goals/${id}`));
-        });
-        goalList.appendChild(li);
-    });
-
-    const t = totals();
-    netAfterBillsEl.textContent = currency(t.netAfterBills);
-    plannedSavingsEl.textContent = currency(t.goalsTotal);
-    leewayEl.textContent = currency(t.leeway);
-    adviceEl.textContent = (t.leeway >= 0)
-        ? "Nice! You have room to save."
-        : "You’re over target—trim entertainment or reduce goals.";
-}
-
-// --- Write handlers ---
-// Income
-incomeEl.addEventListener("change", (e) => {
-    const v = asNumber(e.target.value);
-    update(ref(db, `users/${uid}`), { income: v });
+    computeAndRender({ income, frequency, bills, goals });
 });
 
-// Frequency
-segRadios.forEach(r => {
-    r.addEventListener("change", () => {
-        if (!r.checked) return;
-        update(ref(db, `users/${uid}`), { frequency: r.value });
+// ---- Calculate: compute + write (no auth gate) ----
+calcBtn.addEventListener("click", async () => {
+    const income = asNumber(incomeEl.value);
+    const frequency = getSelectedFrequency();
+    const bills = collectRows(billForm);
+    const goals = collectRows(goalForm);
+
+    const totals = computeAndRender({ income, frequency, bills, goals });
+
+    const billsById = {}; bills.forEach((b, i) => billsById[`b${i + 1}`] = b);
+    const goalsById = {}; goals.forEach((g, i) => goalsById[`g${i + 1}`] = g);
+
+    await update(ref(db, `users/${uid}`), {
+        income,
+        frequency,
+        bills: billsById,
+        goals: goalsById
     });
-});
 
-// Add bill
-billForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const payload = {
-        type: billType.value,
-        name: billName.value.trim(),
-        amount: asNumber(billAmount.value)
-    };
-    if (!payload.type || !payload.name) return;
-    const idRef = push(ref(db, `users/${uid}/bills`));
-    set(idRef, payload);
-    billForm.reset();
-});
+    await set(push(ref(db, `users/${uid}/history`)), {
+        income, frequency, bills, goals, summary: totals,
+        createdAt: serverTimestamp()
+    });
 
-// Add goal
-goalForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const payload = {
-        type: goalType.value,
-        name: goalName.value.trim(),
-        amount: asNumber(goalAmount.value)
-    };
-    if (!payload.type || !payload.name) return;
-    const idRef = push(ref(db, `users/${uid}/goals`));
-    set(idRef, payload);
-    goalForm.reset();
+    console.info("Saved calculation without auth (dev rules required).");
 });

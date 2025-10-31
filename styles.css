@@ -4,15 +4,15 @@
 *::after { box-sizing: border-box; }
 
 :root{
-  --bg: #e9eaeb;              /* light gray app bg */
-  --panel: #f6f7f8;           /* card/panel bg */
-  --text: #1e1f22;            /* primary text */
-  --muted: #6b6f76;           /* muted text */
-  --chip: #b5b8bd;            /* gray “chip” look (like screenshot) */
+  --bg: #e9eaeb;
+  --panel: #f6f7f8;
+  --text: #1e1f22;
+  --muted: #6b6f76;
+  --chip: #b5b8bd;
   --chip-text: #111; 
   --chip-focus: #8e93a0;
   --line: #d7d9dd;
-  --accent: #111;             /* minimal dark accent */
+  --accent: #111;
   --radius: 14px;
   --shadow: 0 6px 20px rgba(0,0,0,.06);
 }
@@ -94,7 +94,7 @@ select:focus{
   box-shadow: 0 0 0 4px rgba(142,147,160,.18);
 }
 
-/* ---------- Segmented Control (Weekly | Biweekly | Monthly) ---------- */
+/* ---------- Segmented Control ---------- */
 .segmented{
   display: inline-flex;
   gap: 10px;
@@ -117,7 +117,6 @@ select:focus{
 }
 
 .seg-btn input{
-  /* hide native */
   position: absolute; opacity: 0; pointer-events: none;
 }
 
@@ -157,7 +156,7 @@ select:focus{
   border: none;
   font-size: 22px;
   font-weight: 800;
-  background: #9aa0a6; /* slightly darker than chip to pop */
+  background: #9aa0a6;
   color: #fff;
   cursor: pointer;
   transition: transform .06s ease, filter .15s ease;
@@ -165,7 +164,22 @@ select:focus{
 .add-btn:hover{ filter: brightness(1.05); }
 .add-btn:active{ transform: translateY(1px); }
 
-/* ---------- Lists ---------- */
+/* Calculate button (Income section) */
+.calc-btn{
+  height: 40px;
+  padding: 0 18px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 800;
+  background: #111;
+  color: #fff;
+  cursor: pointer;
+  transition: transform .06s ease, filter .15s ease;
+}
+.calc-btn:hover{ filter: brightness(1.15); }
+.calc-btn:active{ transform: translateY(1px); }
+
+/* ---------- Lists (kept for future) ---------- */
 .list{
   list-style: none;
   margin: 14px 0 0 0;

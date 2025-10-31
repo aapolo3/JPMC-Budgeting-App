@@ -2,133 +2,132 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>JPMC Budgeting Site</title>
-    <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JPMC Budgeting Site</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
-    <main id="app">
-        <h1>Budget Planner</h1>
+  <main id="app">
+    <h1>Budget Planner</h1>
 
-        <!-- Income + Pay Frequency -->
-        <section class="panel" aria-labelledby="income-heading">
-            <h2 id="income-heading">Income</h2>
+    <!-- Income -->
+    <section class="panel" aria-labelledby="income-heading">
+      <h2 id="income-heading">Income</h2>
 
-            <div class="row">
-                <label for="income">Income: $</label>
-                <input id="income" name="income" type="number" step="0.01" min="0" placeholder="0.00"
-                    inputmode="decimal" />
-            </div>
+      <div class="row">
+        <label for="income">Income: $</label>
+        <input id="income" name="income" type="number" step="0.01" min="0" placeholder="0.00" inputmode="decimal" />
+        <button id="calculate" class="calc-btn" type="button" aria-label="Calculate">Calculate</button>
+      </div>
 
-            <div class="row">
-                <span class="label">Paycheck Frequency:</span>
-                <fieldset class="segmented" role="radiogroup" aria-label="Paycheck Frequency">
-                    <label class="seg-btn">
-                        <input type="radio" name="frequency" value="weekly" checked />
-                        <span>Weekly</span>
-                    </label>
-                    <label class="seg-btn">
-                        <input type="radio" name="frequency" value="biweekly" />
-                        <span>Biweekly</span>
-                    </label>
-                    <label class="seg-btn">
-                        <input type="radio" name="frequency" value="monthly" />
-                        <span>Monthly</span>
-                    </label>
-                </fieldset>
-            </div>
-        </section>
+      <div class="row">
+        <span class="label">Paycheck Frequency:</span>
+        <fieldset class="segmented" role="radiogroup" aria-label="Paycheck Frequency">
+          <label class="seg-btn">
+            <input type="radio" name="frequency" value="weekly" checked />
+            <span>Weekly</span>
+          </label>
+          <label class="seg-btn">
+            <input type="radio" name="frequency" value="biweekly" />
+            <span>Biweekly</span>
+          </label>
+          <label class="seg-btn">
+            <input type="radio" name="frequency" value="monthly" />
+            <span>Monthly</span>
+          </label>
+        </fieldset>
+      </div>
+    </section>
 
-        <!-- Bills -->
-        <section class="panel" aria-labelledby="bills-heading">
-            <h2 id="bills-heading">List Bills</h2>
+    <!-- Bills -->
+    <section class="panel" aria-labelledby="bills-heading">
+      <h2 id="bills-heading">List Bills</h2>
 
-            <!-- container form (no submit); each row is a .grid.entry-row -->
-            <form id="bill-form" autocomplete="off">
-                <div class="grid entry-row">
-                    <select class="inline" required>
-                        <option value="" disabled selected>Select Type:</option>
-                        <option value="rent">Rent</option>
-                        <option value="utilities">Utilities</option>
-                        <option value="internet">Internet</option>
-                        <option value="phone">Phone</option>
-                        <option value="insurance">Insurance</option>
-                        <option value="subscriptions">Subscriptions</option>
-                        <option value="groceries">Groceries</option>
-                        <option value="transportation">Transportation</option>
-                        <option value="other">Other</option>
-                    </select>
+      <form id="bill-form" autocomplete="off">
+        <div class="grid entry-row">
+          <select class="inline" required>
+            <option value="" disabled selected>Select Type:</option>
+            <option value="rent">Rent</option>
+            <option value="utilities">Utilities</option>
+            <option value="internet">Internet</option>
+            <option value="phone">Phone</option>
+            <option value="insurance">Insurance</option>
+            <option value="subscriptions">Subscriptions</option>
+            <option value="groceries">Groceries</option>
+            <option value="transportation">Transportation</option>
+            <option value="other">Other</option>
+          </select>
 
-                    <label class="sr-only">Bill Label</label>
-                    <input type="text" placeholder="Label (e.g., Electric)" required />
+          <label class="sr-only">Bill Label</label>
+          <input type="text" placeholder="Label (e.g., Electric)" required />
 
-                    <label class="sr-only">Bill Amount</label>
-                    <input type="number" step="0.01" min="0" placeholder="Amount" required inputmode="decimal" />
+          <label class="sr-only">Bill Amount</label>
+          <input type="number" step="0.01" min="0" placeholder="Amount" required inputmode="decimal" />
 
-                    <div class="row" style="gap:8px;">
-                        <button type="button" class="add-btn add-line" aria-label="Add bill">+</button>
-                        <button type="button" class="icon-btn remove-line" aria-label="Remove bill">✕</button>
-                    </div>
-                </div>
-            </form>
-        </section>
+          <div class="row" style="gap:8px;">
+            <button type="button" class="add-btn add-line" aria-label="Add bill">+</button>
+            <button type="button" class="icon-btn remove-line" aria-label="Remove bill">✕</button>
+          </div>
+        </div>
+      </form>
+    </section>
 
-        <!-- Goals -->
-        <section class="panel" aria-labelledby="goals-heading">
-            <h2 id="goals-heading">Any goals?</h2>
+    <!-- Goals -->
+    <section class="panel" aria-labelledby="goals-heading">
+      <h2 id="goals-heading">Any goals?</h2>
 
-            <form id="goal-form" autocomplete="off">
-                <div class="grid entry-row">
-                    <select class="inline" required>
-                        <option value="" disabled selected>Select Type:</option>
-                        <option value="save_per_month">Save per Month</option>
-                        <option value="save_per_paycheck">Save per Paycheck</option>
-                        <option value="pay_debt">Pay Down Debt</option>
-                        <option value="emergency_fund">Emergency Fund</option>
-                        <option value="other">Other</option>
-                    </select>
+      <form id="goal-form" autocomplete="off">
+        <div class="grid entry-row">
+          <select class="inline" required>
+            <option value="" disabled selected>Select Type:</option>
+            <option value="save_per_month">Save per Month</option>
+            <option value="save_per_paycheck">Save per Paycheck</option>
+            <option value="pay_debt">Pay Down Debt</option>
+            <option value="emergency_fund">Emergency Fund</option>
+            <option value="other">Other</option>
+          </select>
 
-                    <label class="sr-only">Goal Label</label>
-                    <input type="text" placeholder="Label (e.g., New laptop)" required />
+          <label class="sr-only">Goal Label</label>
+          <input type="text" placeholder="Label (e.g., New laptop)" required />
 
-                    <label class="sr-only">Goal Amount</label>
-                    <input type="number" step="0.01" min="0" placeholder="Amount" required inputmode="decimal" />
+          <label class="sr-only">Goal Amount</label>
+          <input type="number" step="0.01" min="0" placeholder="Amount" required inputmode="decimal" />
 
-                    <div class="row" style="gap:8px;">
-                        <button type="button" class="add-btn add-line" aria-label="Add goal">+</button>
-                        <button type="button" class="icon-btn remove-line" aria-label="Remove goal">✕</button>
-                    </div>
-                </div>
-            </form>
-        </section>
+          <div class="row" style="gap:8px;">
+            <button type="button" class="add-btn add-line" aria-label="Add goal">+</button>
+            <button type="button" class="icon-btn remove-line" aria-label="Remove goal">✕</button>
+          </div>
+        </div>
+      </form>
+    </section>
 
-        <!-- Summary / Guidance -->
-        <section class="panel" aria-labelledby="summary-heading">
-            <h2 id="summary-heading">Summary</h2>
-            <div class="summary-grid">
-                <div>
-                    <p class="muted">Net after bills</p>
-                    <p id="net-after-bills" class="big">$0.00</p>
-                </div>
-                <div>
-                    <p class="muted">Planned savings</p>
-                    <p id="planned-savings" class="big">$0.00</p>
-                </div>
-                <div>
-                    <p class="muted">Leeway</p>
-                    <p id="leeway" class="big">$0.00</p>
-                </div>
-            </div>
-            <p id="advice" class="advice" aria-live="polite">
-                Enter your info to see if you have room to save or need to trim entertainment.
-            </p>
-        </section>
-    </main>
+    <!-- Summary -->
+    <section class="panel" aria-labelledby="summary-heading">
+      <h2 id="summary-heading">Summary</h2>
+      <div class="summary-grid">
+        <div>
+          <p class="muted">Net after bills</p>
+          <p id="net-after-bills" class="big">$0.00</p>
+        </div>
+        <div>
+          <p class="muted">Planned savings</p>
+          <p id="planned-savings" class="big">$0.00</p>
+        </div>
+        <div>
+          <p class="muted">Leeway</p>
+          <p id="leeway" class="big">$0.00</p>
+        </div>
+      </div>
+      <p id="advice" class="advice" aria-live="polite">
+        Enter your info to see if you have room to save or need to trim entertainment.
+      </p>
+    </section>
+  </main>
 
-    <script defer src="firebase.js"></script>
-    <script defer src="script.js"></script>
+  <script type="module" src="firebase.js"></script>
+  <script defer src="script.js"></script>
 </body>
 
 </html>
