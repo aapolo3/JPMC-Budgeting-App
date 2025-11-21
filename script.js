@@ -10,17 +10,7 @@ document.addEventListener("submit", (e) => e.preventDefault());
     if (addBtn) {
       const row = addBtn.closest(".entry-row");
       const clone = row.cloneNode(true);
-
-      clone.querySelectorAll("input").forEach((i) => (i.value = ""));
-      const sel = clone.querySelector("select");
-      if (sel) sel.selectedIndex = 0;
-
-      const rem = clone.querySelector(".remove-line");
-      if (rem) rem.style.display = "";
-      row.after(clone);
-      (clone.querySelector("select, input") || clone).focus();
     }
-
     if (removeBtn) {
       const rows = form.querySelectorAll(".entry-row");
       if (rows.length > 1) {
